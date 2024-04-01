@@ -35,11 +35,6 @@ public class VRTest : MonoBehaviour
 
     public void OnClickBtnStartXR()
     {
-        if (cts != null)
-        {
-            cts.Dispose();
-        }
-        cts = new CancellationTokenSource();
         StartXR().Forget();
 
     }
@@ -77,6 +72,11 @@ public class VRTest : MonoBehaviour
     }
     private async UniTask StartXR()
     {
+        if (cts != null)
+        {
+            cts.Cancel();
+        }
+        cts = new CancellationTokenSource();
         Screen.orientation = ScreenOrientation.LandscapeLeft;
         await UniTask.WaitUntil(() => { return Screen.width > Screen.height; }, cancellationToken: cts.Token);
         await UniTask.Delay(System.TimeSpan.FromSeconds(0.1f), cancellationToken: cts.Token);
@@ -108,16 +108,17 @@ public class VRTest : MonoBehaviour
         {
             cts.Cancel();
         }
-
+        cts = new CancellationTokenSource();
         if (XRGeneralSettings.Instance.Manager.isInitializationComplete)
         {
             XRGeneralSettings.Instance.Manager.StopSubsystems();
             XRGeneralSettings.Instance.Manager.DeinitializeLoader();
         }
+        
         await UniTask.Delay(System.TimeSpan.FromSeconds(0.2f), cancellationToken: cts.Token);
         Screen.orientation = ScreenOrientation.Portrait;
         await UniTask.WaitUntil(() => { return Screen.width < Screen.height; }, cancellationToken: cts.Token);
-        await UniTask.Delay(System.TimeSpan.FromSeconds(0.2f), cancellationToken: cts.Token);
+        await UniTask.Delay(System.TimeSpan.FromSeconds(1f), cancellationToken: cts.Token);
         mainCamera.gameObject.SetActive(true);
         mainCamera.ResetAspect();
         vrCameraRoot.SetActive(false);
