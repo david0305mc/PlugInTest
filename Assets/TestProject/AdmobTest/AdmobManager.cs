@@ -9,8 +9,8 @@ public class AdmobManager : Singleton<AdmobManager>
 {
     // These ad units are configured to always serve test ads.
 #if UNITY_ANDROID
-    //const string adUnitId = "ca-app-pub-3940256099942544/5224354917";     // Test
-    const string adUnitId = "ca-app-pub-9673687584530511/1466634455";     // abyssrium classic
+    const string adUnitId = "ca-app-pub-3940256099942544/5224354917";     // Test
+    //const string adUnitId = "ca-app-pub-9673687584530511/1466634455";     // abyssrium classic
     //const string adUnitId = "ca-app-pub-8431072124651465/8995392220";     // david
 
 #elif UNITY_IPHONE
