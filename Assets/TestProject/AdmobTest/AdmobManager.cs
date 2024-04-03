@@ -2,7 +2,7 @@ using GoogleMobileAds.Api;
 using System;
 using UnityEngine;
 
-public class GoogleAdMob : SingletonMonoBehaviour<GoogleAdMob>
+public class AdmobManager : SingletonMonoBehaviour<AdmobManager>
 {
     // These ad units are configured to always serve test ads.
 #if UNITY_ANDROID

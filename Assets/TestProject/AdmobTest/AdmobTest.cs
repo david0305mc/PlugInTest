@@ -6,6 +6,6 @@ public class AdmobTest : MonoBehaviour
 {
     public void OnClickBtnShowAD()
     {
-        GoogleAdMob.Instance.ShowRewardedAd();
+        AdmobManager.Instance.ShowRewardedAd();
     }
 }
