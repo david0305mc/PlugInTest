@@ -4,8 +4,12 @@ using UnityEngine;
 
 public class AdmobTest : MonoBehaviour
 {
+    private void Awake()
+    {
+        AdmobManager.Instance.Initialize();
+    }
     public void OnClickBtnShowAD()
     {
-        AdmobManager.Instance.ShowRewardedAd();
+        AdmobManager.Instance.Show();
     }
 }
