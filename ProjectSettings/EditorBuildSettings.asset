@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/VRTest/VRTest.unity
-    guid: 62215cd436d599c4dafa03d057ab2aaa
+    path: Assets/TestProject/AdmobTest/AdmobTest.unity
+    guid: 9db1c15256c771741b4820ee4931d53e
   m_configObjects:
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 4fedfebbaae66e7459c9a5ffb1b8fa62,
       type: 2}
