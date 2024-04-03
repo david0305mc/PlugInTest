@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "809d23edae0df58fd0f61b4b6f67855c59d1b2fb"
+      "hash": "d057074f177b078e29f10dd511b54df48a8806ea"
     },
     "com.google.xr.cardboard": {
       "version": "https://github.com/googlevr/cardboard-xr-plugin.git",
