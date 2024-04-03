@@ -9,8 +9,8 @@ public class AdmobManager : Singleton<AdmobManager>
 {
     // These ad units are configured to always serve test ads.
 #if UNITY_ANDROID
-    const string adUnitId = "ca-app-pub-3940256099942544/5224354917";     // Test
-    //const string adUnitId = "ca-app-pub-9673687584530511/1466634455";     // abyssrium classic
+    //const string adUnitId = "ca-app-pub-3940256099942544/5224354917";     // Test
+    const string adUnitId = "ca-app-pub-9673687584530511/1466634455";     // abyssrium classic
     //const string adUnitId = "ca-app-pub-8431072124651465/8995392220";     // david
 
 #elif UNITY_IPHONE
@@ -31,7 +31,6 @@ public class AdmobManager : Singleton<AdmobManager>
         if (_initialized)
             return;
 
-        RegistTestDevice();
         Debug.Log("[Admob] Try Initialize..");
         MobileAds.Initialize(_ =>
         {
@@ -40,6 +39,7 @@ public class AdmobManager : Singleton<AdmobManager>
             //[Todo] 미디에이션 설정
             //AudienceNetwork.AdSettings.SetAdvertiserTrackingEnabled(true);
             _adUnits.Add(new AdmobUnit(adUnitId));
+            RegistTestDevice();
         });
 
         _initialized = true;
@@ -52,11 +52,14 @@ public class AdmobManager : Singleton<AdmobManager>
         //    .SetTagForChildDirectedTreatment(TagForChildDirectedTreatment.Unspecified).SetTestDeviceIds(new List<string>() {
         //        "03266CD6F563177473AF491D46F688C8",
         //    }).build();
-        RequestConfiguration requestConfiguration = MobileAds.GetRequestConfiguration()
-            .ToBuilder()
-            .SetTagForChildDirectedTreatment(TagForChildDirectedTreatment.Unspecified).build();
-        MobileAds.SetRequestConfiguration(requestConfiguration);
-        requestConfiguration.TestDeviceIds.Add("03266CD6F563177473AF491D46F688C8");
+        var confitureBuilder = new RequestConfiguration.Builder();
+        var config = confitureBuilder.SetTestDeviceIds(new List<string>() { "03266CD6F563177473AF491D46F688C8" }).build();
+        MobileAds.SetRequestConfiguration(config);
+        //RequestConfiguration requestConfiguration = MobileAds.GetRequestConfiguration()
+        //    .ToBuilder()
+        //    .SetTagForChildDirectedTreatment(TagForChildDirectedTreatment.Unspecified).build();
+        //MobileAds.SetRequestConfiguration(requestConfiguration);
+        //requestConfiguration.TestDeviceIds.Add("03266CD6F563177473AF491D46F688C8");
     }
 
     public UniTask<EResult> Show(int idx = 0)
