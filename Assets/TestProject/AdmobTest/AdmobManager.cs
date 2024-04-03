@@ -36,9 +36,21 @@ public class AdmobManager : Singleton<AdmobManager>
             //[Todo] 미디에이션 설정
             //AudienceNetwork.AdSettings.SetAdvertiserTrackingEnabled(true);
             _adUnits.Add(new AdmobUnit(adUnitId));
+            RegistTestDevice();
         });
 
         _initialized = true;
+    }
+
+    public void RegistTestDevice()
+    {
+        RequestConfiguration requestConfiguration = MobileAds.GetRequestConfiguration()
+            .ToBuilder()
+            .SetTagForChildDirectedTreatment(TagForChildDirectedTreatment.Unspecified).SetTestDeviceIds(new List<string>() {
+                "03266CD6F563177473AF491D46F688C8",
+            }).build();
+        MobileAds.SetRequestConfiguration(requestConfiguration);
+        //requestConfiguration.TestDeviceIds.Add("2077ef9a63d2b398840261c8221a0c9b");
     }
 
     public UniTask<EResult> Show(int idx = 0)
