@@ -7,9 +7,11 @@ public class AdmobTest : MonoBehaviour
     private void Awake()
     {
         //AdmobManager.Instance.Initialize();
+        AdmobManager.Instance.Init();
     }
     public void OnClickBtnShowAD()
     {
         //AdmobManager.Instance.Show();
+        AdmobManager.Instance.ShowRewardedAd();
     }
 }
