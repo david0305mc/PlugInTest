@@ -12,7 +12,10 @@
             url "https://repo.maven.apache.org/maven2/" // Assets/GoogleMobileAds/Mediation/AppLovin/Editor/AppLovinMediationDependencies.xml:24, Assets/GoogleMobileAds/Mediation/DTExchange/Editor/DTExchangeMediationDependencies.xml:24, Assets/GoogleMobileAds/Mediation/LiftoffMonetize/Editor/LiftoffMonetizeMediationDependencies.xml:24, Assets/GoogleMobileAds/Mediation/MetaAudienceNetwork/Editor/MetaAudienceNetworkMediationDependencies.xml:24, Assets/GoogleMobileAds/Mediation/UnityAds/Editor/UnityMediationDependencies.xml:25, Assets/GoogleMobileAds/Mediation/UnityAds/Editor/UnityMediationDependencies.xml:33
         }
         maven {
-            url "https://dl.google.com/dl/android/maven2/" // Assets/GoogleMobileAds/Mediation/AppLovin/Editor/AppLovinMediationDependencies.xml:24, Assets/GoogleMobileAds/Mediation/DTExchange/Editor/DTExchangeMediationDependencies.xml:24, Assets/GoogleMobileAds/Mediation/LiftoffMonetize/Editor/LiftoffMonetizeMediationDependencies.xml:24, Assets/GoogleMobileAds/Mediation/MetaAudienceNetwork/Editor/MetaAudienceNetworkMediationDependencies.xml:24, Assets/GoogleMobileAds/Mediation/UnityAds/Editor/UnityMediationDependencies.xml:25
+            url "https://android-sdk.is.com/" // Assets/GoogleMobileAds/Mediation/IronSource/Editor/IronSourceMediationDependencies.xml:24
+        }
+        maven {
+            url "https://dl.google.com/dl/android/maven2/" // Assets/GoogleMobileAds/Mediation/AppLovin/Editor/AppLovinMediationDependencies.xml:24, Assets/GoogleMobileAds/Mediation/DTExchange/Editor/DTExchangeMediationDependencies.xml:24, Assets/GoogleMobileAds/Mediation/IronSource/Editor/IronSourceMediationDependencies.xml:24, Assets/GoogleMobileAds/Mediation/LiftoffMonetize/Editor/LiftoffMonetizeMediationDependencies.xml:24, Assets/GoogleMobileAds/Mediation/MetaAudienceNetwork/Editor/MetaAudienceNetworkMediationDependencies.xml:24, Assets/GoogleMobileAds/Mediation/UnityAds/Editor/UnityMediationDependencies.xml:25
         }
         mavenLocal()
         mavenCentral()
@@ -32,6 +35,7 @@ dependencies {
     implementation 'com.google.ads.mediation:applovin:12.1.0.0' // Assets/GoogleMobileAds/Mediation/AppLovin/Editor/AppLovinMediationDependencies.xml:24
     implementation 'com.google.ads.mediation:facebook:6.15.0.0' // Assets/GoogleMobileAds/Mediation/MetaAudienceNetwork/Editor/MetaAudienceNetworkMediationDependencies.xml:24
     implementation 'com.google.ads.mediation:fyber:8.2.5.0' // Assets/GoogleMobileAds/Mediation/DTExchange/Editor/DTExchangeMediationDependencies.xml:24
+    implementation 'com.google.ads.mediation:ironsource:7.5.2.0' // Assets/GoogleMobileAds/Mediation/IronSource/Editor/IronSourceMediationDependencies.xml:24
     implementation 'com.google.ads.mediation:unity:4.9.2.0' // Assets/GoogleMobileAds/Mediation/UnityAds/Editor/UnityMediationDependencies.xml:25
     implementation 'com.google.ads.mediation:vungle:6.12.1.1' // Assets/GoogleMobileAds/Mediation/LiftoffMonetize/Editor/LiftoffMonetizeMediationDependencies.xml:24
     implementation 'com.google.android.gms:play-services-ads:22.5.0' // Assets/GoogleMobileAds/Editor/GoogleMobileAdsDependencies.xml:7
