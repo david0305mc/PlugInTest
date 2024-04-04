@@ -2,8 +2,10 @@
   <packages>
     <package>com.google.ads.mediation:applovin:12.1.0.0</package>
     <package>com.google.ads.mediation:fyber:8.2.5.0</package>
+    <package>com.google.ads.mediation:unity:4.9.2.0</package>
     <package>com.google.android.gms:play-services-ads:22.5.0</package>
     <package>com.google.android.ump:user-messaging-platform:2.1.0</package>
+    <package>com.unity3d.ads:unity-ads:4.8.0</package>
   </packages>
   <files />
   <settings>
