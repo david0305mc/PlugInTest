@@ -11,7 +11,6 @@ public class AdmobTest : MonoBehaviour
     }
     public void OnClickBtnShowAD()
     {
-        //AdmobManager.Instance.Show();
-        AdmobManager.Instance.ShowRewardedAd();
+        AdmobManager.Instance.Show(AdType.Gacha);
     }
 }
