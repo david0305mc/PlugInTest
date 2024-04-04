@@ -72,8 +72,15 @@ public class AdmobManager : Singleton<AdmobManager>
     };
 
     private Dictionary<AdType, AdmobUnit> dicAdmobUnit = new Dictionary<AdType, AdmobUnit>();
-    public void Init()
+    private bool _initialized = false;
+    public void Initialize()
     {
+#if UNITY_EDITOR
+        _initialized = true;
+#endif
+        if (_initialized)
+            return;
+
         // Initialize the Google Mobile Ads SDK.
         MobileAds.Initialize(initStatus => {
             Load(); 
