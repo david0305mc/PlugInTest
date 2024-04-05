@@ -75,9 +75,6 @@ public class AdmobManager : Singleton<AdmobManager>
     private bool _initialized = false;
     public void Initialize()
     {
-#if UNITY_EDITOR
-        _initialized = true;
-#endif
         if (_initialized)
             return;
 
@@ -102,19 +99,19 @@ public class AdmobManager : Singleton<AdmobManager>
 
 public class AdmobUnit
 {
-    private string adUnitId;
+    private string _unitId;
     private List<AdmobAd> _adCache;
-    private int cacheSize = 3;
-    public AdmobUnit(string _adUnitID)
+    private int _cacheSize = 3;
+    public AdmobUnit(string id)
     {
-        adUnitId = _adUnitID;
-        _adCache = new List<AdmobAd>();
+        _unitId = id;
         Load();
     }
 
     private void Load()
     {
-        while (_adCache.Count < cacheSize)
+        _adCache = new List<AdmobAd>();
+        while (_adCache.Count < _cacheSize)
         {
             Create();
         }
@@ -122,36 +119,32 @@ public class AdmobUnit
 
     private void Create()
     {
-        _adCache.Add(new AdmobAd(adUnitId));
+        _adCache.Add(new AdmobAd(_unitId));
     }
 
+    private void UpdateCache()
+    {
+        for (int i = _adCache.Count - 1; i >= 0; --i)
+        {
+            if (_adCache[i] == null)
+            {
+                _adCache.RemoveAt(i);
+                continue;
+            }
+
+            if (_adCache[i].IsError)
+            {
+                _adCache[i].Release();
+            }
+        }
+        Load();
+    }
     private void Remove(AdmobAd ad)
     {
         ad.Release();
         _adCache.Remove(ad);
     }
-    public async UniTask<EResult> Show()
-    {
-        try
-        {
-            // Touch Block
-            AdmobAd ad = await Get();
-            if (ad == null)
-                return EResult.Error;
 
-            UniTaskCompletionSource<EResult> completeionSource = new UniTaskCompletionSource<EResult>();
-            ad.Show(result=> {
-                Remove(ad);
-                completeionSource.TrySetResult(result);
-            });
-            return await completeionSource.Task;
-        }
-        finally
-        {
-            // touch Unblock
-            UpdateCache();
-        }
-    }
     async UniTask<AdmobAd> Get()
     {
         AdmobAd ad = null;
@@ -177,23 +170,27 @@ public class AdmobUnit
 
         return ad;
     }
-
-    private void UpdateCache()
+    public async UniTask<EResult> Show()
     {
-        for (int i = _adCache.Count - 1; i >= 0; --i)
+        try
         {
-            if (_adCache[i] == null)
-            {
-                _adCache.RemoveAt(i);
-                continue;
-            }
+            // Touch Block
+            AdmobAd ad = await Get();
+            if (ad == null)
+                return EResult.Error;
 
-            if (_adCache[i].IsError)
-            {
-                _adCache[i].Release();
-            }
+            UniTaskCompletionSource<EResult> completeionSource = new UniTaskCompletionSource<EResult>();
+            ad.Show(result=> {
+                Remove(ad);
+                completeionSource.TrySetResult(result);
+            });
+            return await completeionSource.Task;
         }
-        Load();
+        finally
+        {
+            // touch Unblock
+            UpdateCache();
+        }
     }
 }
 
@@ -259,5 +256,4 @@ public class AdmobAd
             callback.Invoke(EResult.Error);
         }
     }
-
 }
