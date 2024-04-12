@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
-public enum AdType
+public enum ADType
 { 
     ReceiveGoods,
     Gacha,
@@ -21,67 +21,73 @@ public enum EResult : int
     Error,
 }
 
-
 public class AdmobManager : Singleton<AdmobManager>
 {
-    readonly Dictionary<AdType, string> AdUnitIDDic = new Dictionary<AdType, string>() 
+#if UNITY_ANDROID
+    public static readonly string TestADUnitID = "ca-app-pub-3940256099942544/5224354917";
+#else
+    public static readonly string TestADUnitID = "ca-app-pub-3940256099942544/1712485313";
+#endif
+
+    readonly Dictionary<ADType, string> AdUnitIDDic = new Dictionary<ADType, string>()
     {
         {
-            AdType.ReceiveGoods,
+            ADType.ReceiveGoods,
 #if UNITY_ANDROID
-            "ca-app-pub-3940256099942544/5224354917"
+            "ca-app-pub-9673687584530511/1466634455"
 #elif UNITY_IPHONE
-            "ca-app-pub-3940256099942544/1712485313"
+            "ca-app-pub-9673687584530511/2014618733"
 #else
             "ca-app-pub-3940256099942544/1712485313"
 #endif
         },
         {
-            AdType.Gacha,
+            ADType.Gacha,
 #if UNITY_ANDROID
-            "ca-app-pub-3940256099942544/5224354917"
+            "ca-app-pub-9673687584530511/9394143206"
 #elif UNITY_IPHONE
-            "ca-app-pub-3940256099942544/1712485313"
-#else
-            "ca-app-pub-3940256099942544/1712485313"
-#endif
-        },
-        {
-
-            AdType.ReduceTime,
-#if UNITY_ANDROID
-            "ca-app-pub-3940256099942544/5224354917"
-#elif UNITY_IPHONE
-            "ca-app-pub-3940256099942544/1712485313"
+            "ca-app-pub-9673687584530511/9765678293"
 #else
             "ca-app-pub-3940256099942544/1712485313"
 #endif
         },
         {
 
-            AdType.RandomReward,
+            ADType.ReduceTime,
 #if UNITY_ANDROID
-            "ca-app-pub-3940256099942544/5224354917"
+            "ca-app-pub-9673687584530511/8069453240"
+#elif UNITY_IPHONE
+            "ca-app-pub-9673687584530511/1887188272"
+#else
+            "ca-app-pub-3940256099942544/1712485313"
+#endif
+        },
+        {
+
+            ADType.RandomReward,
+#if UNITY_ANDROID
+            "ca-app-pub-9673687584530511/5443289903"
             
 #elif UNITY_IPHONE
-            "ca-app-pub-3940256099942544/1712485313"
+            "ca-app-pub-9673687584530511/3200269945"
 #else
             "ca-app-pub-3940256099942544/1712485313"
 #endif
         }
     };
 
-    private Dictionary<AdType, AdmobUnit> dicAdmobUnit = new Dictionary<AdType, AdmobUnit>();
+    private Dictionary<ADType, AdmobUnit> dicAdmobUnit = new Dictionary<ADType, AdmobUnit>();
     private bool _initialized = false;
     public void Initialize()
     {
         if (_initialized)
             return;
-
         // Initialize the Google Mobile Ads SDK.
         MobileAds.Initialize(initStatus => {
-            Load(); 
+            Load();
         });
+
+        _initialized = true;
     }
     private void Load()
     {
@@ -91,7 +97,7 @@ public class AdmobManager : Singleton<AdmobManager>
             dicAdmobUnit.Add(item.Key, admobUnit);
         }
     }
-    public UniTask<EResult> Show(AdType _type)
+    public UniTask<EResult> Show(ADType _type)
     {
         return dicAdmobUnit[_type].Show();
     }
@@ -104,7 +110,11 @@ public class AdmobUnit
     private int _cacheSize = 3;
     public AdmobUnit(string id)
     {
+#if RELEASE
         _unitId = id;
+#else
+        _unitId = AdmobManager.TestADUnitID;
+#endif
         Load();
     }
 
@@ -174,13 +184,12 @@ public class AdmobUnit
     {
         try
         {
-            // Touch Block
             AdmobAd ad = await Get();
             if (ad == null)
                 return EResult.Error;
 
             UniTaskCompletionSource<EResult> completeionSource = new UniTaskCompletionSource<EResult>();
-            ad.Show(result=> {
+            ad.Show(result => {
                 Remove(ad);
                 completeionSource.TrySetResult(result);
             });
@@ -188,7 +197,6 @@ public class AdmobUnit
         }
         finally
         {
-            // touch Unblock
             UpdateCache();
         }
     }
@@ -199,11 +207,14 @@ public class AdmobAd
     private RewardedAd _rewardedAd = default;
 
     public bool IsError { get; private set; }
-    public bool IsLoaded { get 
-        { 
-            return _rewardedAd != default; 
-        }}
-    
+    public bool IsLoaded
+    {
+        get
+        {
+            return _rewardedAd != default;
+        }
+    }
+
     public AdmobAd(string adUnitId)
     {
         Load(adUnitId);
@@ -236,7 +247,10 @@ public class AdmobAd
     }
     public void Release()
     {
-        _rewardedAd.Destroy();
+        if (_rewardedAd != null)
+        {
+            _rewardedAd.Destroy();
+        }
         _rewardedAd = null;
     }
     public void Show(Action<EResult> callback)
