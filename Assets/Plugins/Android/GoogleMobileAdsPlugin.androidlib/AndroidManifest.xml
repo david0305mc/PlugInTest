@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.google.unity.ads" android:versionName="1.0" android:versionCode="1">
   <application>
     <uses-library android:required="false" android:name="org.apache.http.legacy" />
-    <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-9673687584530511~7413983751" />
-    <meta-data android:name="com.google.unity.ads.UNITY_VERSION" android:value="2021.3.5f1" />
+    <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-5389586288363488~3885309385" />
+    <meta-data android:name="com.google.unity.ads.UNITY_VERSION" android:value="2021.3.33f1" />
   </application>
 </manifest>
