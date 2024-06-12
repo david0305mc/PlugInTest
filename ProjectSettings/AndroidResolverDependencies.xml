@@ -2,13 +2,19 @@
   <packages>
     <package>androidx.constraintlayout:constraintlayout:2.1.4</package>
     <package>com.google.ads.mediation:applovin:12.5.0.0</package>
+    <package>com.google.ads.mediation:facebook:6.17.0.0</package>
+    <package>com.google.ads.mediation:fyber:8.2.7.0</package>
+    <package>com.google.ads.mediation:ironsource:8.1.0.0</package>
+    <package>com.google.ads.mediation:unity:4.10.0.0</package>
+    <package>com.google.ads.mediation:vungle:7.3.2.0</package>
     <package>com.google.android.gms:play-services-ads:23.0.0</package>
     <package>com.google.android.ump:user-messaging-platform:2.2.0</package>
+    <package>com.unity3d.ads:unity-ads:4.10.0</package>
   </packages>
   <files />
   <settings>
     <setting name="androidAbis" value="arm64-v8a,armeabi-v7a" />
-    <setting name="bundleId" value="com.David.PlugInTest" />
+    <setting name="bundleId" value="com.wemadeconnect.abyssclassic" />
     <setting name="explodeAars" value="True" />
     <setting name="gradleBuildEnabled" value="True" />
     <setting name="gradlePropertiesTemplateEnabled" value="True" />
