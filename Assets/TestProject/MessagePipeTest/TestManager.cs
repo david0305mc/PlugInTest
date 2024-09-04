@@ -3,15 +3,24 @@ using MessagePipe;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UniRx;
+using UnityEngine.UI;
 
 public class TestManager : MonoBehaviour
 {
+    [SerializeField] private Button button;
     private void Awake()
     {
-        //MessageDispather.Receive<int>(EMessage.Test01).Subscribe(_ =>
-        //{
-        //    RefreshWelcomeRewardNoti();
-        //}).AddTo(gameObject);
+        MessageDispather.Receive<int>(EMessage.Test01).Subscribe(x =>
+        {
+            Debug.Log($"test {x}");            
+        }).AddTo(gameObject);
+
+        button.onClick.AddListener(() =>
+        {
+            MessageDispather.Publish(EMessage.Test01, 1);
+
+        });
     }
     void Start()
     {

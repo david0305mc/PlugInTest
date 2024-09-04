@@ -6,6 +6,7 @@ using UnityEngine;
 public partial class MessageDispather 
 {
     private static MessagePipeProvider _provider;
+    public static readonly MessageDispather Default = new MessageDispather();
 
     public MessageDispather()
     {
