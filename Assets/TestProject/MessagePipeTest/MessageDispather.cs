@@ -1,4 +1,5 @@
 using MessagePipe;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -38,4 +39,13 @@ public partial class MessageDispather
         return (ISubscriber<TKey, TMessage>)service;
     }
 
+    public static IObservable<TMessage> Receive<TKey, TMessage>(TKey message)
+    {
+        return GetSubscriber<TKey, TMessage>().AsObservable(message);
+    }
+
+    public static IObservable<T> Receive<T>(EMessage message)
+    {
+        return Receive<EMessage, T>(message);
+    }
 }
