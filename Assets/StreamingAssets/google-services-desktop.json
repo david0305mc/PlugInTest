@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "123600794483",
+    "project_id": "abyssmeta",
+    "storage_bucket": "abyssmeta.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:123600794483:android:7fcc11a897b0e68b2d8b06",
+        "android_client_info": {
+          "package_name": "com.wemadeif.abyssmeta"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "123600794483-anmsoj6i40j315mnh95725ddrirr5kv8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wemadeif.abyssmeta",
+            "certificate_hash": "ef8136a4168e7b41d5bb237f50f89b0b91a31342"
+          }
+        },
+        {
+          "client_id": "123600794483-b36n5q5f2dl3oq7povq0ddr8fbq46mj8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wemadeif.abyssmeta",
+            "certificate_hash": "5f63939c32d8f93af9a52332c40271978dd96c97"
+          }
+        },
+        {
+          "client_id": "123600794483-2c1go8fqfgnftqn4udqoo1i3kosof95a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAQ4Ezko34OnjuK81k_lBZo3-kd7NVoUY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "123600794483-2c1go8fqfgnftqn4udqoo1i3kosof95a.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "123600794483-ba0g9lg55qauiirpf7d148ehrt65ihen.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.wemadeif.abyssmeta",
+                "app_store_id": "1633386742"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

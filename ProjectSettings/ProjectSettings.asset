@@ -137,7 +137,8 @@ PlayerSettings:
     16:9: 1
     Others: 1
   bundleVersion: 0.0.12
-  preloadedAssets: []
+  preloadedAssets:
+  - {fileID: 2089140509484219250, guid: 4fedfebbaae66e7459c9a5ffb1b8fa62, type: 2}
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -157,7 +158,7 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Android: com.wemadeconnect.abyssclassic
+    Android: com.wemadeif.abyssmeta
     Standalone: com.David.VRTest
     iPhone: com.david.vrtest
   buildNumber:
@@ -253,8 +254,8 @@ PlayerSettings:
   AndroidTargetDevices: 0
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: '{inproject}: Keystore/PlugInTestKeyStore.keystore'
-  AndroidKeyaliasName: 
+  AndroidKeystoreName: '{inproject}: Keystore/AbyssriumMetaRelease.keystore'
+  AndroidKeyaliasName: release
   AndroidBuildApkPerCpuArchitecture: 0
   AndroidTVCompatibility: 0
   AndroidIsGame: 1

@@ -1,2 +1,9 @@
 lastUpgrade=01014
 proj.pluginVersion=0.10.14
+proj.AppId=123600794483
+and.BundleId=com.wemadeif.abyssmeta
+proj.classDir=Assets
+proj.ConstantsClassName=GPGSIds
+and.ResourceData=%3c%3fxml+version%3d%221.0%22+encoding%3d%22utf-8%22%3f%3e%0d%0a%3c%21--Google+Play+game+services+IDs.+Save+this+file+as+res%2fvalues%2fgames-ids.xml+in+your+project.--%3e%0d%0a%3cresources%3e%0d%0a++%3c%21--app_id--%3e%0d%0a++%3cstring+name%3d%22app_id%22+translatable%3d%22false%22%3e123600794483%3c%2fstring%3e%0d%0a++%3c%21--package_name--%3e%0d%0a++%3cstring+name%3d%22package_name%22+translatable%3d%22false%22%3ecom.wemadeif.abyssmeta%3c%2fstring%3e%0d%0a++%3c%21--achievement+First+Impression--%3e%0d%0a++%3cstring+name%3d%22achievement_first_impression%22+translatable%3d%22false%22%3eCgkI8-a5ucwDEAIQAg%3c%2fstring%3e%0d%0a%3c%2fresources%3e
+and.ClientId=123600794483-2c1go8fqfgnftqn4udqoo1i3kosof95a.apps.googleusercontent.com
+android.SetupDone=true
