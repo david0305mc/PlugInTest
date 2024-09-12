@@ -2,6 +2,44 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+public enum EServerStatus
+{
+    /// <summary>라이브</summary>
+    Live,
+    /// <summary>리뷰</summary>
+    Review = 5,
+    /// <summary>업데이트 권장</summary>
+    Update_Recommend,
+    /// <summary>업데이트 강제</summary>
+    Update_Essential,
+    /// <summary>점검</summary>
+    Maintenance,
+}
+public class VersionData
+{
+    public int version;
+    public OSCode os;
+    public EServerStatus status;
+    public string game_url;
+    public string cdn_url;
+    public int coupon_use;
+}
+
+public enum OSCode
+{
+    Unknown = -1,
+    iOS = 0,
+    Android = 1,
+    Windows = Android,
+}
+public enum EServerType
+{
+    Dev,
+    Qa,
+    Review,
+    Live,
+}
 public enum EPlatform
 {
     None,

@@ -34,9 +34,11 @@ public class FirebaseTest2 : MonoBehaviour
     private async UniTaskVoid SignIn()
     {
         Debug.Log("try SignIn");
+        loginButton.gameObject.SetActive(false);
         bool success = await AuthManager.Instance.SignIn();
         if (!success)
         {
+            loginButton.gameObject.SetActive(true);
             //Debug.Log("AuthenticatePlatform success");
             //string authToken = await AuthManager.Instance.SignInWithGoogle();
             //Debug.Log($"authToken {authToken}");
