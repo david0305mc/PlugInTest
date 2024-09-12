@@ -1,75 +1,74 @@
-//using System;
-//using System.Collections;
-//using System.Collections.Generic;
-//using System.Text;
-//using System.Threading;
-//using UnityEngine;
-//using UnityEngine.Networking;
-//using Cysharp.Threading.Tasks;
-////using Cysharp.Text;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading;
+using UnityEngine;
+using UnityEngine.Networking;
+using Cysharp.Threading.Tasks;
 
-//using Newtonsoft.Json;
-//using Newtonsoft.Json.Linq;
-//using Response = Protocols.Response;
-
-
-//public enum RequestType
-//{
-//    Get,
-//    Post
-//}
-
-//public class RequestContext
-//{
-//    public string id;
-//    public int method;
-//    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-//    public object @params;
-//    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-//    public string sess;
-
-//    [JsonIgnore] public RequestType reqType;
-
-//    /// <summary>재전송 디폴트 처리 여부</summary>
-//    [JsonIgnore] public bool defaultRetryHandling;
-
-//    /// <summary>예외 동작 디폴트 처리 여부</summary>    
-//    [JsonIgnore] public bool defaultExceptionHandling;
-
-//    /// <summary>입력 락 디폴트 처리 여부</summary>    
-//    [JsonIgnore] public bool defaultLockHandling;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Response = Protocols.Response;
 
 
-//    public static RequestContext Create(int method,
-//        RequestType requestType = RequestType.Post,
-//        bool defaultLockHandling = true,
-//        bool defaultRetryHandling = true,
-//        bool defaultExceptionHandling = true)
-//    {
-//        RequestContext ret = new RequestContext();
-//        ret.id = Utility.RandomId8Bytes();
-//        ret.method = method;
-//        ret.@params = null;
-//        ret.reqType = requestType;
-//        ret.sess = ServerSetting.sess;
-//        ret.defaultLockHandling = defaultLockHandling;
-//        ret.defaultRetryHandling = defaultRetryHandling;
-//        ret.defaultExceptionHandling = defaultExceptionHandling;
-//        return ret;
-//    }
+public enum RequestType
+{
+    Get,
+    Post
+}
 
-//    public static RequestContext Create<T>(int method,
-//        T data,
-//        RequestType requestType = RequestType.Post,
-//        bool defaultLockHandling = true,
-//        bool defaultRetryHandling = true,
-//        bool defaultExceptionHandling = true)
-//    {
-//        var ret = Create(method, requestType, defaultLockHandling, defaultRetryHandling, defaultExceptionHandling);
-//        ret.@params = data;
-//        return ret;
-//    }
-//}
+public class RequestContext
+{
+    public string id;
+    public int method;
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public object @params;
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public string sess;
+
+    [JsonIgnore] public RequestType reqType;
+
+    /// <summary>재전송 디폴트 처리 여부</summary>
+    [JsonIgnore] public bool defaultRetryHandling;
+
+    /// <summary>예외 동작 디폴트 처리 여부</summary>    
+    [JsonIgnore] public bool defaultExceptionHandling;
+
+    /// <summary>입력 락 디폴트 처리 여부</summary>    
+    [JsonIgnore] public bool defaultLockHandling;
+
+
+    public static RequestContext Create(int method,
+        RequestType requestType = RequestType.Post,
+        bool defaultLockHandling = true,
+        bool defaultRetryHandling = true,
+        bool defaultExceptionHandling = true)
+    {
+        RequestContext ret = new RequestContext();
+        ret.id = Utility.RandomId8Bytes();
+        ret.method = method;
+        ret.@params = null;
+        ret.reqType = requestType;
+        ret.sess = ServerSetting.sess;
+        ret.defaultLockHandling = defaultLockHandling;
+        ret.defaultRetryHandling = defaultRetryHandling;
+        ret.defaultExceptionHandling = defaultExceptionHandling;
+        return ret;
+    }
+
+    public static RequestContext Create<T>(int method,
+        T data,
+        RequestType requestType = RequestType.Post,
+        bool defaultLockHandling = true,
+        bool defaultRetryHandling = true,
+        bool defaultExceptionHandling = true)
+    {
+        var ret = Create(method, requestType, defaultLockHandling, defaultRetryHandling, defaultExceptionHandling);
+        ret.@params = data;
+        return ret;
+    }
+}
 
 //public class ResponseContext
 //{
@@ -95,273 +94,273 @@
 //    }
 //}
 
-//public static class UnityHttp
-//{
-//    private const string systemMessage = "system";
+public static class UnityHttp
+{
+    private const string systemMessage = "system";
 
-//    private static Dictionary<string, string> jsonHeaders = new Dictionary<string, string>() { { "Content-Type", "application/json" } };
-//    private static readonly int timeout = 30;
-//    private static readonly int retryTimeout = 8;
-//    private static bool retryChecking = false;
-//    private static double retryLastTime;
-//    private static double retryElapsedTime => GameTime.Get() - retryLastTime;
-//    private static bool isRetryTimeOut => retryElapsedTime > retryTimeout;
-//    public static double server_time { get; private set; }
-
-
-//    //ResponseHeader 정보가 필요한 경우에 사용        
-//    public static async UniTask<ResponseData> GetData(string url,
-//        Dictionary<string, string> headers = null,
-//        IProgress<float> progress = null,
-//        CancellationToken cancellationToken = default)
-//    {
-//        RETRY:
-//        using (UnityWebRequest req = UnityWebRequest.Get(Utility.URLAntiCacheRandomizer(url)))
-//        {
-//            req.timeout = timeout;
-
-//            if (headers != null)
-//            {
-//                foreach (var header in headers)
-//                    req.SetRequestHeader(header.Key, header.Value);
-//            }
-
-//            try
-//            {
-//                await req.SendWebRequest().ToUniTask(progress, cancellationToken: cancellationToken);
-//#if ENABLE_HTTP_LOG
-//                Debug.LogFormat("[UnityHttp/Get/Recv] {0}", req.downloadHandler.text);
-//#endif
-//                return new ResponseData(req.downloadHandler.data, req.GetResponseHeaders());
-//            }
-//            catch (UnityWebRequestException e)
-//            {
-//                Debug.LogErrorFormat("[UnityHttp] {0}", e);
-//                await CheckRetryTimeout(cancellationToken);
-//                goto RETRY;
-//            }
-//        }
-//    }
-
-//    public static async UniTask<byte[]> Get(string url,
-//        Dictionary<string, string> headers = null,
-//        IProgress<float> progress = null,
-//        bool defaultLockHandling = true,
-//        bool defaultRetryHandling = true,
-//        bool defaultExceptionHandling = true,
-//        CancellationToken cancellationToken = default)
-//    {
-//        RETRY:
-//        using (UnityWebRequest req = UnityWebRequest.Get(Utility.URLAntiCacheRandomizer(url)))
-//        {
-//            req.timeout = timeout;
-
-//            if (headers != null)
-//            {
-//                foreach (var header in headers)
-//                    req.SetRequestHeader(header.Key, header.Value);
-//            }
-
-//            try
-//            {
-//                await req.SendWebRequest().ToUniTask(progress, cancellationToken: cancellationToken);
-//#if ENABLE_HTTP_LOG
-//                Debug.LogFormat("[UnityHttp/Get/Recv] {0}", req.downloadHandler.text);
-//#endif                
-//                return req.downloadHandler.data;
-//            }
-//            catch (UnityWebRequestException e)
-//            {
-//                Debug.LogErrorFormat("[UnityHttp] {0}\n{1}", url, e);
-
-//                if (!defaultExceptionHandling)
-//                    throw;
-
-//                if (!defaultRetryHandling)
-//                    throw;
-
-//                await CheckRetryTimeout(cancellationToken);
-//                goto RETRY;
-//            }
-//        }
-//    }
-
-//    public static async UniTask<T> Get<T>(string url,
-//        Dictionary<string, string> headers = null,
-//        IProgress<float> progress = null,
-//        bool defaultLockHandling = true,
-//        bool defaultRetryHandling = true,
-//        bool defaultExceptionHandling = true,
-//        CancellationToken cancellationToken = default)
-//    {
-//        return JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(await Get(url, headers, progress, defaultLockHandling, defaultRetryHandling, defaultExceptionHandling, cancellationToken)));
-//    }
+    private static Dictionary<string, string> jsonHeaders = new Dictionary<string, string>() { { "Content-Type", "application/json" } };
+    private static readonly int timeout = 30;
+    private static readonly int retryTimeout = 8;
+    private static bool retryChecking = false;
+    private static double retryLastTime;
+    //private static double retryElapsedTime => GameTime.Get() - retryLastTime;
+    //private static bool isRetryTimeOut => retryElapsedTime > retryTimeout;
+    public static double server_time { get; private set; }
 
 
-//    /// <summary>
-//    /// 서버 요청 처리
-//    /// <para/>(주의!)정상적인 응답이 아닌경우 Exception 발생시키므로 응답 대기 로직의 경우 반드시 예외처리 필요!!    
-//    /// </summary>    
-//    /// 외부에서 재시작 처리하게 된 경우 중단처리 되어야한다
-//    /// [Todo] 성능 개선을 위해 JsonSerialize 분리
-//    public static async UniTask<ResponseContext> Send(RequestContext data, CancellationToken cancellationToken = default)
-//    {
-//        if (data.defaultLockHandling)
-//        {
-//            TouchBlockManager.Instance.AddLock();
-//        }
+    //    //ResponseHeader 정보가 필요한 경우에 사용        
+    //    public static async UniTask<ResponseData> GetData(string url,
+    //        Dictionary<string, string> headers = null,
+    //        IProgress<float> progress = null,
+    //        CancellationToken cancellationToken = default)
+    //    {
+    //        RETRY:
+    //        using (UnityWebRequest req = UnityWebRequest.Get(Utility.URLAntiCacheRandomizer(url)))
+    //        {
+    //            req.timeout = timeout;
 
-//        try
-//        {
-//            string id = data.id;
-//            string jsonData = JsonConvert.SerializeObject(data);
-//            Encryptor encryptor = ServerSetting.isEncryptServer ? ServerSetting.encryptor : null;
-//            byte[] rawData = encryptor != null ? Encoding.UTF8.GetBytes(await encryptor.EncryptToStringAsync(jsonData)) : Encoding.UTF8.GetBytes(jsonData);
+    //            if (headers != null)
+    //            {
+    //                foreach (var header in headers)
+    //                    req.SetRequestHeader(header.Key, header.Value);
+    //            }
 
-//#if ENABLE_HTTP_LOG
-//            Debug.LogFormat("[UnityHttp/Post/Send] {0}", jsonData);
-//#endif
+    //            try
+    //            {
+    //                await req.SendWebRequest().ToUniTask(progress, cancellationToken: cancellationToken);
+    //#if ENABLE_HTTP_LOG
+    //                Debug.LogFormat("[UnityHttp/Get/Recv] {0}", req.downloadHandler.text);
+    //#endif
+    //                return new ResponseData(req.downloadHandler.data, req.GetResponseHeaders());
+    //            }
+    //            catch (UnityWebRequestException e)
+    //            {
+    //                Debug.LogErrorFormat("[UnityHttp] {0}", e);
+    //                await CheckRetryTimeout(cancellationToken);
+    //                goto RETRY;
+    //            }
+    //        }
+    //    }
 
-//            RETRY:
-//            using (UnityWebRequest req = new UnityWebRequest(ServerSetting.gameUrl, UnityWebRequest.kHttpVerbPOST))
-//            {
-//                req.timeout = timeout;
+    public static async UniTask<byte[]> Get(string url,
+    Dictionary<string, string> headers = null,
+    IProgress<float> progress = null,
+    bool defaultLockHandling = true,
+    bool defaultRetryHandling = true,
+    bool defaultExceptionHandling = true,
+    CancellationToken cancellationToken = default)
+{
+    RETRY:
+    using (UnityWebRequest req = UnityWebRequest.Get(Utility.URLAntiCacheRandomizer(url)))
+    {
+        req.timeout = timeout;
 
-//                foreach (var header in jsonHeaders)
-//                    req.SetRequestHeader(header.Key, header.Value);
+        if (headers != null)
+        {
+            foreach (var header in headers)
+                req.SetRequestHeader(header.Key, header.Value);
+        }
 
-//                req.downloadHandler = new DownloadHandlerBuffer();
-//                req.uploadHandler = new UploadHandlerRaw(rawData);
-//                string text = string.Empty;
+        try
+        {
+            await req.SendWebRequest().ToUniTask(progress, cancellationToken: cancellationToken);
+#if ENABLE_HTTP_LOG
+                Debug.LogFormat("[UnityHttp/Get/Recv] {0}", req.downloadHandler.text);
+#endif
+            return req.downloadHandler.data;
+        }
+        catch (UnityWebRequestException e)
+        {
+            Debug.LogErrorFormat("[UnityHttp] {0}\n{1}", url, e);
 
-//                try
-//                {
-//                    await req.SendWebRequest().ToUniTask(cancellationToken: cancellationToken);
+            if (!defaultExceptionHandling)
+                throw;
 
-//                    text = encryptor != null ? await encryptor.DecryptToStringAsync(req.downloadHandler.text) : req.downloadHandler.text;
-//#if ENABLE_HTTP_LOG
-//                    Debug.LogFormat("[UnityHttp/Post/Recv] {0}", text);
-//#endif                    
-//                }
-//                catch (UnityWebRequestException e)
-//                {
-//                    Debug.LogErrorFormat("[UnityHttp] {0}:{1}", id, e);
+            if (!defaultRetryHandling)
+                throw;
 
-//                    if (data.reqType == RequestType.Post && e.Result != UnityWebRequest.Result.ConnectionError)
-//                    {
-//                        var exception = new UnityHttpNetworkException(req);
-//                        if (data.defaultExceptionHandling)
-//                            await GameAPI.Exception(exception, cancellationToken);
+            //await CheckRetryTimeout(cancellationToken);
+            goto RETRY;
+        }
+    }
+}
 
-//                        throw exception;
-//                    }
-
-//                    await CheckRetryTimeout(cancellationToken);
-//                    goto RETRY;
-//                }
+    public static async UniTask<T> Get<T>(string url,
+        Dictionary<string, string> headers = null,
+        IProgress<float> progress = null,
+        bool defaultLockHandling = true,
+        bool defaultRetryHandling = true,
+        bool defaultExceptionHandling = true,
+        CancellationToken cancellationToken = default)
+    {
+        return JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(await Get(url, headers, progress, defaultLockHandling, defaultRetryHandling, defaultExceptionHandling, cancellationToken)));
+    }
 
 
-//                ResponseContext resp = null;
-//                try
-//                {
-//                    resp = JsonConvert.DeserializeObject<ResponseContext>(text);
-//                }
-//                catch (Exception e)
-//                {
-//                    Debug.LogErrorFormat("[UnityHttp] {0}:{1}", id, e);
+    //    /// <summary>
+    //    /// 서버 요청 처리
+    //    /// <para/>(주의!)정상적인 응답이 아닌경우 Exception 발생시키므로 응답 대기 로직의 경우 반드시 예외처리 필요!!    
+    //    /// </summary>    
+    //    /// 외부에서 재시작 처리하게 된 경우 중단처리 되어야한다
+    //    /// [Todo] 성능 개선을 위해 JsonSerialize 분리
+    //    public static async UniTask<ResponseContext> Send(RequestContext data, CancellationToken cancellationToken = default)
+    //    {
+    //        if (data.defaultLockHandling)
+    //        {
+    //            TouchBlockManager.Instance.AddLock();
+    //        }
 
-//                    var resps = JsonConvert.DeserializeObject<ResponseContext[]>(text);
-//                    for (int i = 0; i < resps.Length; ++i)
-//                    {
-//                        if (resps[i].id == systemMessage)
-//                        {
-//                            Debug.Log("[UnityHttp/Send/Recv] SystemMessage");
-//                            await GameAPI.OnSystemMessage(resps[i].GetResult<Response.SystemData>(), cancellationToken);
-//                        }
-//                        else if (resps[i].id == id)
-//                        {
-//                            resp = resps[i];
-//                        }
-//                    }
-//                }
+    //        try
+    //        {
+    //            string id = data.id;
+    //            string jsonData = JsonConvert.SerializeObject(data);
+    //            Encryptor encryptor = ServerSetting.isEncryptServer ? ServerSetting.encryptor : null;
+    //            byte[] rawData = encryptor != null ? Encoding.UTF8.GetBytes(await encryptor.EncryptToStringAsync(jsonData)) : Encoding.UTF8.GetBytes(jsonData);
 
-//                if (resp == null)
-//                    throw new UnityHttpNetworkException(req);
+    //#if ENABLE_HTTP_LOG
+    //            Debug.LogFormat("[UnityHttp/Post/Send] {0}", jsonData);
+    //#endif
 
-//                if (resp.error != null)
-//                {
-//                    Debug.LogErrorFormat("[UnityHttp/Send/Recv] {0} Error code : {1}", id, resp.error.code);
+    //            RETRY:
+    //            using (UnityWebRequest req = new UnityWebRequest(ServerSetting.gameUrl, UnityWebRequest.kHttpVerbPOST))
+    //            {
+    //                req.timeout = timeout;
 
-//                    var exception = new UnityHttpGameServerException(resp);
-//                    if (data.defaultExceptionHandling)
-//                        await GameAPI.Exception(exception, cancellationToken);
+    //                foreach (var header in jsonHeaders)
+    //                    req.SetRequestHeader(header.Key, header.Value);
 
-//                    throw exception;
-//                }
+    //                req.downloadHandler = new DownloadHandlerBuffer();
+    //                req.uploadHandler = new UploadHandlerRaw(rawData);
+    //                string text = string.Empty;
 
-//                if (resp.alert != null)
-//                {
-//                    Debug.LogErrorFormat("[UnityHttp/Send/Recv] {0} Alert code : {1}", id, resp.alert.code);
+    //                try
+    //                {
+    //                    await req.SendWebRequest().ToUniTask(cancellationToken: cancellationToken);
 
-//                    var exception = new UnityHttpGameServerException(resp);
-//                    if (data.defaultExceptionHandling)
-//                        await GameAPI.Exception(exception, cancellationToken);
+    //                    text = encryptor != null ? await encryptor.DecryptToStringAsync(req.downloadHandler.text) : req.downloadHandler.text;
+    //#if ENABLE_HTTP_LOG
+    //                    Debug.LogFormat("[UnityHttp/Post/Recv] {0}", text);
+    //#endif                    
+    //                }
+    //                catch (UnityWebRequestException e)
+    //                {
+    //                    Debug.LogErrorFormat("[UnityHttp] {0}:{1}", id, e);
 
-//                    throw exception;
-//                }
+    //                    if (data.reqType == RequestType.Post && e.Result != UnityWebRequest.Result.ConnectionError)
+    //                    {
+    //                        var exception = new UnityHttpNetworkException(req);
+    //                        if (data.defaultExceptionHandling)
+    //                            await GameAPI.Exception(exception, cancellationToken);
 
-//                if (resp.maintenance != null)
-//                {
-//                    Debug.LogError("[UnityHttp/Send/Recv] Maintenance");
+    //                        throw exception;
+    //                    }
 
-//                    var exception = new UnityHttpGameServerMaintenance(resp.maintenance);
-//                    if (data.defaultExceptionHandling)
-//                        await GameAPI.Exception(exception, cancellationToken);
+    //                    await CheckRetryTimeout(cancellationToken);
+    //                    goto RETRY;
+    //                }
 
-//                    throw exception;
-//                }
 
-//                server_time = resp.server_time;
-//                return resp;
-//            }
-//        }
-//        finally
-//        {
-//            if (data.defaultLockHandling)
-//            {
-//                TouchBlockManager.Instance.RemoveLock();
-//            }
-//        }
-//    }
+    //                ResponseContext resp = null;
+    //                try
+    //                {
+    //                    resp = JsonConvert.DeserializeObject<ResponseContext>(text);
+    //                }
+    //                catch (Exception e)
+    //                {
+    //                    Debug.LogErrorFormat("[UnityHttp] {0}:{1}", id, e);
 
-//    public static UniTask<T> Send<T>(RequestContext data,
-//        CancellationToken cancellationToken = default)
-//    {
-//        return Send(data, cancellationToken).ContinueWith(x => x.GetResult<T>());
-//    }
+    //                    var resps = JsonConvert.DeserializeObject<ResponseContext[]>(text);
+    //                    for (int i = 0; i < resps.Length; ++i)
+    //                    {
+    //                        if (resps[i].id == systemMessage)
+    //                        {
+    //                            Debug.Log("[UnityHttp/Send/Recv] SystemMessage");
+    //                            await GameAPI.OnSystemMessage(resps[i].GetResult<Response.SystemData>(), cancellationToken);
+    //                        }
+    //                        else if (resps[i].id == id)
+    //                        {
+    //                            resp = resps[i];
+    //                        }
+    //                    }
+    //                }
 
-//    static async UniTask CheckRetryTimeout(CancellationToken cancellationToken)
-//    {
-//        await UniTask.WaitWhile(() => retryChecking, cancellationToken: cancellationToken);
+    //                if (resp == null)
+    //                    throw new UnityHttpNetworkException(req);
 
-//        if (!isRetryTimeOut)
-//        {
-//            await UniTask.Delay(TimeSpan.FromSeconds(2.0), cancellationToken: cancellationToken);
-//            return;
-//        }
+    //                if (resp.error != null)
+    //                {
+    //                    Debug.LogErrorFormat("[UnityHttp/Send/Recv] {0} Error code : {1}", id, resp.error.code);
 
-//        try
-//        {
-//            retryChecking = true;
-//            await MessageDispather.PublishAsync(EMessage.Confirm, Localization.Get("system_error_check_network"), cancellationToken);
-//        }
-//        finally
-//        {
-//            retryChecking = false;
-//            retryLastTime = GameTime.Get();
-//        }
-//    }
-//}
+    //                    var exception = new UnityHttpGameServerException(resp);
+    //                    if (data.defaultExceptionHandling)
+    //                        await GameAPI.Exception(exception, cancellationToken);
+
+    //                    throw exception;
+    //                }
+
+    //                if (resp.alert != null)
+    //                {
+    //                    Debug.LogErrorFormat("[UnityHttp/Send/Recv] {0} Alert code : {1}", id, resp.alert.code);
+
+    //                    var exception = new UnityHttpGameServerException(resp);
+    //                    if (data.defaultExceptionHandling)
+    //                        await GameAPI.Exception(exception, cancellationToken);
+
+    //                    throw exception;
+    //                }
+
+    //                if (resp.maintenance != null)
+    //                {
+    //                    Debug.LogError("[UnityHttp/Send/Recv] Maintenance");
+
+    //                    var exception = new UnityHttpGameServerMaintenance(resp.maintenance);
+    //                    if (data.defaultExceptionHandling)
+    //                        await GameAPI.Exception(exception, cancellationToken);
+
+    //                    throw exception;
+    //                }
+
+    //                server_time = resp.server_time;
+    //                return resp;
+    //            }
+    //        }
+    //        finally
+    //        {
+    //            if (data.defaultLockHandling)
+    //            {
+    //                TouchBlockManager.Instance.RemoveLock();
+    //            }
+    //        }
+    //    }
+
+    //    public static UniTask<T> Send<T>(RequestContext data,
+    //        CancellationToken cancellationToken = default)
+    //    {
+    //        return Send(data, cancellationToken).ContinueWith(x => x.GetResult<T>());
+    //    }
+
+    //    static async UniTask CheckRetryTimeout(CancellationToken cancellationToken)
+    //    {
+    //        await UniTask.WaitWhile(() => retryChecking, cancellationToken: cancellationToken);
+
+    //        if (!isRetryTimeOut)
+    //        {
+    //            await UniTask.Delay(TimeSpan.FromSeconds(2.0), cancellationToken: cancellationToken);
+    //            return;
+    //        }
+
+    //        try
+    //        {
+    //            retryChecking = true;
+    //            await MessageDispather.PublishAsync(EMessage.Confirm, Localization.Get("system_error_check_network"), cancellationToken);
+    //        }
+    //        finally
+    //        {
+    //            retryChecking = false;
+    //            retryLastTime = GameTime.Get();
+    //        }
+    //    }
+}
 
 
 

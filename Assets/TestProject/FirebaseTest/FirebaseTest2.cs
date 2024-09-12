@@ -12,7 +12,7 @@ public class FirebaseTest2 : MonoBehaviour
     {
         loginButton.onClick.AddListener(() =>
         {
-            SignIn().Forget();
+            StartGame().Forget();
         });
         loginButton.gameObject.SetActive(false);
     }
@@ -31,9 +31,10 @@ public class FirebaseTest2 : MonoBehaviour
             loginButton.gameObject.SetActive(true);
         }
     }
-    private async UniTaskVoid SignIn()
+    private async UniTaskVoid StartGame()
     {
         Debug.Log("try SignIn");
+        var serverStatus = ServerAPI.GetServerStatus(default);
         loginButton.gameObject.SetActive(false);
         bool success = await AuthManager.Instance.SignIn();
         if (!success)

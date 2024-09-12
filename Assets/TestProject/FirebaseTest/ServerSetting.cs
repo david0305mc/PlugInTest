@@ -46,6 +46,16 @@ public static class ServerSetting
 		{ "CCPA", "https://service.wemade-connect.com/policy/CCPA.html" } // 캘리포니아 거주 약관.
     };
 
+    public static OSCode GetOSCode()
+    {
+#if UNITY_ANDROID
+        return OSCode.Android;
+#elif UNITY_IOS
+        return OSCode.iOS;
+#else
+        return OSCode.Android; 
+#endif
+    }
     public static void Set(VersionData data)
     {
         sess = null;
