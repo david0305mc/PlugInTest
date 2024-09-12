@@ -1,0 +1,45 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Cysharp.Threading.Tasks;
+using UnityEngine.UI;
+
+public class FirebaseTest2 : MonoBehaviour
+{
+    [SerializeField] private Button loginButton;
+
+    private void Awake()
+    {
+        loginButton.onClick.AddListener(() =>
+        {
+            SignIn().Forget();
+        });
+        loginButton.gameObject.SetActive(false);
+    }
+    void Start()
+    {
+        Init().Forget();   
+    }
+
+    private async UniTaskVoid Init()
+    {
+        Debug.Log("Init Try");
+        var result = await AuthManager.Instance.Initialize();
+        if (result)
+        {
+            Debug.Log("Init Success");
+            loginButton.gameObject.SetActive(true);
+        }
+    }
+    private async UniTaskVoid SignIn()
+    {
+        Debug.Log("try SignIn");
+        bool success = await AuthManager.Instance.SignIn();
+        if (!success)
+        {
+            //Debug.Log("AuthenticatePlatform success");
+            //string authToken = await AuthManager.Instance.SignInWithGoogle();
+            //Debug.Log($"authToken {authToken}");
+        }
+    }
+}

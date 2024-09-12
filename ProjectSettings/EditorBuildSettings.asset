@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/TestProject/AdmobTest/AdmobTest.unity
-    guid: 9db1c15256c771741b4820ee4931d53e
+    path: Assets/TestProject/FirebaseTest/FirebaseTest2.unity
+    guid: f32c8f931122b404fafa38fb46abc1d4
   m_configObjects:
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 4fedfebbaae66e7459c9a5ffb1b8fa62,
       type: 2}
