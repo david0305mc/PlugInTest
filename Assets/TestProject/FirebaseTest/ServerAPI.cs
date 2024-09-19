@@ -11,11 +11,35 @@ public static class ServerAPI
 {
 
     /// <summary>서버 정보 요청</summary>
-    public static async UniTask<EServerStatus> GetServerStatus(CancellationToken cancellationToken = default)
+    public static async UniTask<EServerStatus> GetServerStatus(bool exceptionThrow = false, CancellationToken cancellationToken = default)
     {
-        var serverVersions = await UnityHttp.Get<VersionData[]>(string.Format("{0}/version_list.json", ServerSetting.commonUrl), cancellationToken: cancellationToken);
-        var versionData = serverVersions.FirstOrDefault(x => x.os == ServerSetting.GetOSCode() && x.version == BuildSetting.version);
-        ServerSetting.Set(versionData);
+        try
+        {
+            var datas = await UnityHttp.Get<VersionData[]>(string.Format("{0}/version_list.json", ServerSetting.commonUrl),
+                defaultRetryHandling: false,
+                defaultExceptionHandling: false,
+                cancellationToken: cancellationToken);
+
+            if (datas != null && datas.Length > 0)
+            {
+                var orderedEnumerable = datas.OrderByDescending(d => d.version);
+
+                //서버에 해당 버전 테이블이 없는경우 앱 강제 업데이트 요구됨
+                //var versionData = orderedEnumerable.FirstOrDefault(x => x.os == ServerSetting.GetOSCode() && x.version == BuildSetting.version);
+                var versionData = orderedEnumerable.FirstOrDefault(x => x.os == ServerSetting.GetOSCode() && x.version == 10500);
+                ServerSetting.Set(versionData);
+
+                var lastVersionData = orderedEnumerable.FirstOrDefault(x => x.os == ServerSetting.GetOSCode() && x.status == EServerStatus.Live);
+                ServerSetting.lastAppVersion = lastVersionData.version;
+                Debug.LogFormat("[Server/Setting/LastAppVersion] {0}", ServerSetting.lastAppVersion);
+            }
+        }
+        catch (System.Exception e)
+        {
+            if (exceptionThrow)
+                throw;
+        }
+
         return ServerSetting.status;
     }
     public static async UniTask<Response.SignIn> SignIn(

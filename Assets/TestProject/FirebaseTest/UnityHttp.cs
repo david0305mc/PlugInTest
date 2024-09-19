@@ -212,6 +212,8 @@ public static class UnityHttp
         {
             string id = data.id;
             string jsonData = JsonConvert.SerializeObject(data);
+            //string id = "2bfbf719";
+            //string jsonData = "{\"id\":\"2bfbf719\",\"method\":1000,\"params\":{\"platform\":3,\"platform_id\":\"eyJhbGciOiJSUzI1NiIsImtpZCI6ImUwM2E2ODg3YWU3ZjNkMTAyNzNjNjRiMDU3ZTY1MzE1MWUyOTBiNzIiLCJ0eXAiOiJKV1QifQ.eyJwcm92aWRlcl9pZCI6ImFub255bW91cyIsImlzcyI6Imh0dHBzOi8vc2VjdXJldG9rZW4uZ29vZ2xlLmNvbS9hYnlzc2NsYXNzaWMiLCJhdWQiOiJhYnlzc2NsYXNzaWMiLCJhdXRoX3RpbWUiOjE3MjY3Mzk0NjgsInVzZXJfaWQiOiJGV213T2MxdTZDWE9mR05Pb1ZlMWlqaGRLVEEzIiwic3ViIjoiRldtd09jMXU2Q1hPZkdOT29WZTFpamhkS1RBMyIsImlhdCI6MTcyNjczOTQ2OSwiZXhwIjoxNzI2NzQzMDY5LCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7fSwic2lnbl9pbl9wcm92aWRlciI6ImFub255bW91cyJ9fQ.TyIBMuG6tXtismvH2DmIgg7_7pP9FDzFRFJUaIF5JGymVrnJdD_1_GtwxBVa5gWOpZOrh8Eg7vjEqWuPsmUlBqxOQnS1z1V_zDT5tJXWIqXroK5Pd4esrlWSBXdKg2QmLeIbh5hnK-29bi_cVvb7lwzWmkRjvF8kbmi-o2yePmfABI2XV3STBLf-hdQT-8A8-syvtJrtiX0fygBfHsfFGHZIqf-aT9iOKj5cvCbPo47hLqWoSTwwjBMxZ8nuLLU-L0sSqW-rAFU0xERxqrMY7pF8FOdV1njZbI1RS-GrCqJRwoZjI_nSvdRACVvD3-4DXSgi9GiY0v5Ve50T9WcGCg\",\"lang\":\"KO\",\"push_id\":\"\",\"os\":1,\"gpresto_sdata\":null,\"gpresto_engine_state\":0}}";
             Encryptor encryptor = ServerSetting.isEncryptServer ? ServerSetting.encryptor : null;
             byte[] rawData = encryptor != null ? Encoding.UTF8.GetBytes(await encryptor.EncryptToStringAsync(jsonData)) : Encoding.UTF8.GetBytes(jsonData);
 

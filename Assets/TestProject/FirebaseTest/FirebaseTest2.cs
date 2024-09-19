@@ -45,7 +45,7 @@ public class FirebaseTest2 : MonoBehaviour
     private async UniTaskVoid StartGame()
     {
         Debug.Log("try SignIn");
-        var serverStatus = ServerAPI.GetServerStatus(default);
+        var serverStatus = await ServerAPI.GetServerStatus(cancellationToken: cancelltaionTokenSource.Token);
         loginButton.gameObject.SetActive(false);
         platformPopup.gameObject.SetActive(true);
         UniTaskCompletionSource<EPlatform> ucs = new UniTaskCompletionSource<EPlatform>();

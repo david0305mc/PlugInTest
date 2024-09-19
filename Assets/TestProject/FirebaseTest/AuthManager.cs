@@ -93,9 +93,11 @@ public class AuthManager : Singleton<AuthManager>, IDisposable
         var token = await User.TokenAsync(true).AsUniTask().AttachExternalCancellation(_cts.Token);
         Debug.Log($"test3 {token}");
         SetActiveUser("Guest");
-        var repSignIn = await ServerAPI.SignIn(EPlatform.Guest, token, string.Empty, string.Empty, default).AttachExternalCancellation(_cts.Token);
+        token = "eyJhbGciOiJSUzI1NiIsImtpZCI6ImUwM2E2ODg3YWU3ZjNkMTAyNzNjNjRiMDU3ZTY1MzE1MWUyOTBiNzIiLCJ0eXAiOiJKV1QifQ.eyJwcm92aWRlcl9pZCI6ImFub255bW91cyIsImlzcyI6Imh0dHBzOi8vc2VjdXJldG9rZW4uZ29vZ2xlLmNvbS9hYnlzc2NsYXNzaWMiLCJhdWQiOiJhYnlzc2NsYXNzaWMiLCJhdXRoX3RpbWUiOjE3MjY3Mzk0NjgsInVzZXJfaWQiOiJGV213T2MxdTZDWE9mR05Pb1ZlMWlqaGRLVEEzIiwic3ViIjoiRldtd09jMXU2Q1hPZkdOT29WZTFpamhkS1RBMyIsImlhdCI6MTcyNjc0MDAyMSwiZXhwIjoxNzI2NzQzNjIxLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7fSwic2lnbl9pbl9wcm92aWRlciI6ImFub255bW91cyJ9fQ.GryMezHmwqb6GmFbQCMEkiqwSs4MTc5uPRieb43PpK-L7poD6r6fAkFrCPYrwDshQLPlpPoAt6zEZMa8r7b36uvgqseoH8yef2AwKZQqbLdKigJVbe1P3BjOW1HP05u87CwHNVNp-Q-5v8Xw2xuVij3VGdu9rE5QZO1A1fqGvOZTo2QGz2zyjZso6y8FFF3w9nlZEMMWHJwfMTgo90F-587SvYkR1MfTf91bqUoEiEnEXmdvI1hqmAhwhYjdCnbFd9U4uIDFBqQ73Mn6BLCTkslrHINzF1nFbR8hw3IQ57bIW7JJYFlsN-yXyfBKzaXI-onOdllpWDZcwMHLO3IXDg";
+        var repSignIn = await ServerAPI.SignIn(EPlatform.Guest, token, "KO", string.Empty, default).AttachExternalCancellation(_cts.Token);
         Debug.Log($"test4");
-        //var repLogin = await ServerAPI.Login(repSignIn.uno, repSignIn.token, default).AttachExternalCancellation(_cts.Token);
+        var repLogin = await ServerAPI.Login(repSignIn.uno, repSignIn.token, default).AttachExternalCancellation(_cts.Token);
+        Debug.Log($"test5");
         return true;
     }
 
