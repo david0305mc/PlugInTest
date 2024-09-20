@@ -9,6 +9,7 @@ public class FirebaseTest2 : MonoBehaviour
 {
     [SerializeField] private SelectPlatformPopup platformPopup;
     [SerializeField] private Button loginButton;
+    [SerializeField] private Button levelUpButton;
 
     private CancellationTokenSource cancelltaionTokenSource = new CancellationTokenSource();
     private void Awake()
@@ -17,6 +18,13 @@ public class FirebaseTest2 : MonoBehaviour
         loginButton.onClick.AddListener(() =>
         {
             StartGame().Forget();
+        });
+        levelUpButton.onClick.AddListener(() =>
+        {
+            //UserDataManager.Instance.baseData.level++;
+            UserDataManager.Instance.baseData.AddDicTest(1);
+            UserDataManager.Instance.inventoryData.AddItem();
+            ServerAPI.SaveToServer();
         });
         loginButton.gameObject.SetActive(false);
     }

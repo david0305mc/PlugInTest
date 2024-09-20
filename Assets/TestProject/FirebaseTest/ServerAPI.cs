@@ -6,9 +6,52 @@ using System.Threading;
 using System.Linq;
 using Request = Protocols.Request;
 using Response = Protocols.Response;
+using System;
+using Newtonsoft.Json;
 
-public static class ServerAPI 
+public class RawData
 {
+    public string tableName;
+    public int date_key;
+    public string save_data;
+}
+
+public class SaveData
+{
+    public ulong ver;
+    public List<RawData> save_datas;
+}
+
+public static class ServerAPI
+{
+    public static ulong Uno { get; set; }
+    private static bool useCompress = false;
+    public static Dictionary<string, int> tableIdx = new Dictionary<string, int>()
+    {
+        {"BaseData", 1},
+
+        {"InventoryData", 2},
+    };
+    private static Dictionary<int, string> _tableNames;
+    public static Dictionary<int, string> tableNames
+    {
+        get
+        {
+            if (_tableNames == null)
+                _tableNames = tableIdx.ToDictionary(x => x.Value, x => x.Key);
+
+            return _tableNames;
+        }
+    }
+    public static string ConvertToTableName(int idx)
+    {
+        return tableNames.GetValueOrDefault(idx);
+    }
+
+    public static int ConvertToDateKey(string tableName)
+    {
+        return tableIdx.GetValueOrDefault(tableName);
+    }
 
     /// <summary>서버 정보 요청</summary>
     public static async UniTask<EServerStatus> GetServerStatus(bool exceptionThrow = false, CancellationToken cancellationToken = default)
@@ -98,6 +141,7 @@ public static class ServerAPI
             defaultExceptionHandling: false), cancellationToken);
         //userData.isLogin = true;
         //userData.uno = uno;
+        Uno = uno;
         ServerSetting.sess = responseData.session;
         Debug.Log("Session : " + responseData.session);
         Debug.Log("uNO : " + uno);
@@ -129,6 +173,100 @@ public static class ServerAPI
         //}
 
         throw e;
+    }
+
+    public static async UniTask LoadFromServer(CancellationToken cancellationToken = default)
+    {
+        SaveData data = await UnityHttp.Send<SaveData>(RequestContext.Create(ServerCmd.USER_DATA_LOAD,
+                new Dictionary<string, List<int>>() { { "date_keys", new List<int>() } },
+                defaultRetryHandling: false,
+                defaultExceptionHandling: false), cancellationToken);
+
+        data.save_datas.ForEach(x => x.tableName = ConvertToTableName(x.date_key));
+
+        if (useCompress)
+        {
+            data.save_datas.ForEach(x =>
+            {
+                if (string.IsNullOrEmpty(x.save_data))
+                    return;
+
+                try
+                {
+                    x.save_data = CLZF2.DecompressFromBase64(x.save_data);
+                }
+                catch (Exception e) { Debug.LogError(e); }
+            });
+        }
+
+        foreach (var item in data.save_datas)
+        {
+            if (item.tableName == "BaseData")
+            {
+                UserDataManager.Instance.baseData = UserDataManager.Instance.baseData.ConvertToObject<BaseData>(item.save_data);
+            }
+            else if (item.tableName == "InventoryData")
+            {
+                UserDataManager.Instance.inventoryData = UserDataManager.Instance.baseData.ConvertToObject<InventoryData>(item.save_data);
+            }
+        }
+        Debug.Log(UserDataManager.Instance.baseData.level);
+        Debug.Log($"itemCount : {UserDataManager.Instance.inventoryData.itemList.Count}");
+    }
+
+    public static async UniTask SaveToServer(CancellationToken cancellationToken = default)
+    {
+        SaveData data = new SaveData();
+        data.ver = 999;
+        data.save_datas = new List<RawData>();
+        var tables = tableNames.Values.ToList();
+        for (int i = 0; i < tableNames.Count; i++)
+        {
+            var date_key = ConvertToDateKey(tables[i]);
+            var rawData = new RawData();
+            rawData.tableName = tables[i];
+            rawData.date_key = date_key;
+
+            if (rawData.tableName == "BaseData")
+            {
+                rawData.save_data = UserDataManager.Instance.baseData.ToJson();
+            }
+            else if(rawData.tableName == "InventoryData")
+            {
+                rawData.save_data = UserDataManager.Instance.inventoryData.ToJson();
+            }
+            
+            data.save_datas.Add(rawData);
+        }
+        await SaveToServer(data, useCompress, cancellationToken: cancellationToken);
+        Debug.Log("SaveToServer");
+
+    }
+    private static async UniTask SaveToServer(SaveData value, bool compress = false, CancellationToken cancellationToken = default)
+    {
+        if (compress)
+        {
+            value.save_datas.ForEach(x =>
+            {
+                if (string.IsNullOrEmpty(x.save_data))
+                    return;
+
+                try
+                {
+                    x.save_data = CLZF2.CompressToBase64(x.save_data);
+                }
+                catch (Exception e) { Debug.LogError(e); }
+            });
+        }
+        await UnityHttp.Send(RequestContext.Create(ServerCmd.USER_DATA_SAVE, value,
+                    defaultLockHandling: false,
+                    defaultRetryHandling: false,
+                    defaultExceptionHandling: false), cancellationToken);
+
+#if UNITY_EDITOR
+        //[Todo][Classic] 임시 처리
+        value.save_datas.ForEach(x => PlayerPrefs.SetString($"{Uno}/{x.tableName}", x.save_data));
+#endif
     }
 }
 
