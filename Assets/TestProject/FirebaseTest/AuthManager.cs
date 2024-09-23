@@ -97,6 +97,7 @@ public class AuthManager : Singleton<AuthManager>, IDisposable
         var repSignIn = await ServerAPI.SignIn(EPlatform.Guest, token, "KO", string.Empty, default).AttachExternalCancellation(_cts.Token);
         Debug.Log($"test4");
         var repLogin = await ServerAPI.Login(repSignIn.uno, repSignIn.token, default).AttachExternalCancellation(_cts.Token);
+        UserDataManager.Instance.Uno = repSignIn.uno;
         Debug.Log($"test5");
         if (repSignIn.first_login == 0)
         {
@@ -143,6 +144,10 @@ public class AuthManager : Singleton<AuthManager>, IDisposable
         return credential;
     }
 
+    public void SignOut()
+    {
+        Auth.SignOut();
+    }
     private async UniTask<Credential> SignInWithGuest()
     {
         var ret = await Auth.SignInAnonymouslyAsync().AsUniTask();

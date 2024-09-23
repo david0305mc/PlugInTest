@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 
 public class UserDataManager : Singleton<UserDataManager>
 {
+    public ulong Uno { get; set; }
     public BaseData baseData { get; set; } = new BaseData();
     public InventoryData inventoryData { get; set; } = new InventoryData();
 
@@ -30,9 +32,15 @@ public class SData
 
 public class BaseData : SData
 {
+    public IntReactiveProperty gold = new IntReactiveProperty();
     public int level;
-    public int gold;
+    
     public SerializableDictionary<int, int> dicTest = new SerializableDictionary<int, int>();
+
+    public void AddGold()
+    {
+        gold.Value++;
+    }
     public void AddDicTest(int add)
     {
         GetClassName();

@@ -4,16 +4,27 @@ using UnityEngine;
 using Cysharp.Threading.Tasks;
 using UnityEngine.UI;
 using System.Threading;
+using TMPro;
+using UniRx;
 
 public class FirebaseTest2 : MonoBehaviour
 {
     [SerializeField] private SelectPlatformPopup platformPopup;
     [SerializeField] private Button loginButton;
     [SerializeField] private Button levelUpButton;
+    [SerializeField] private Button levelOutButton;
+    [SerializeField] private Button connectGoogleButton;
+    [SerializeField] private Button connectAppleButton;
+    [SerializeField] private GameObject mainObj;
+    [SerializeField] private TextMeshProUGUI levelText;
+    [SerializeField] private TextMeshProUGUI unoText;
 
+
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private CancellationTokenSource cancelltaionTokenSource = new CancellationTokenSource();
     private void Awake()
     {
+        mainObj.SetActive(false);
         platformPopup.gameObject.SetActive(false);
         loginButton.onClick.AddListener(() =>
         {
@@ -22,16 +33,31 @@ public class FirebaseTest2 : MonoBehaviour
         levelUpButton.onClick.AddListener(() =>
         {
             //UserDataManager.Instance.baseData.level++;
-            UserDataManager.Instance.baseData.AddDicTest(1);
-            UserDataManager.Instance.inventoryData.AddItem();
+            UserDataManager.Instance.baseData.AddGold();
+            //UserDataManager.Instance.baseData.AddDicTest(1);
+            //UserDataManager.Instance.inventoryData.AddItem();
             ServerAPI.SaveToServer();
+
         });
+        levelOutButton.onClick.AddListener(() =>
+        {
+            AuthManager.Instance.SignOut();
+
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
+
+        });
+
         loginButton.gameObject.SetActive(false);
     }
     private void OnDestroy()
     {
         cancelltaionTokenSource.Clear();
         AuthManager.Instance.Dispose();
+        compositeDisposable.Clear();
 
     }
 
@@ -66,16 +92,23 @@ public class FirebaseTest2 : MonoBehaviour
         platform = EPlatform.Guest;
 #endif
         platformPopup.gameObject.SetActive(false);
+        mainObj.SetActive(true);
 
         try
         {
             await AuthManager.Instance.SignInWithPlatform(platform, cancelltaionTokenSource);
+            unoText.SetText(UserDataManager.Instance.Uno.ToString());
         }
         catch
         {
             Debug.LogError("Error");
         }
-        
+
+        UserDataManager.Instance.baseData.gold.Subscribe(_gold =>
+        {
+            levelText.SetText(_gold.ToString());
+        }).AddTo(compositeDisposable);
+
 
         //Debug.Log("AuthenticatePlatform success");
         //string authToken = await AuthManager.Instance.SignInWithGoogle();
